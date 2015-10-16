@@ -7,7 +7,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *  test methods name patter: [UnitOfWork_StateUnderTest_ExpectedBehavior]
  */
 
-public class VectorTest {
+public class VectorTest2 {
     private double[] unsortedArr;
 
     private double[] multByTwoArr;
@@ -187,6 +189,7 @@ public class VectorTest {
 
     @Test
     public void sum() throws Exception {
+        List<Integer> l = new ArrayList<>();
         ArrayVector fisrtVect = new ArrayVector(unsortedArr);
         ArrayVector secondVect = new ArrayVector(multByTwoArr);
 

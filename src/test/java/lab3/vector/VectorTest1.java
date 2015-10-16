@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
  *
  * @author drnewman
  */
-public class ArrayVectorTest {
+public class VectorTest1 {
 
-    public ArrayVectorTest() {
+    public VectorTest1() {
     }
 
     @BeforeClass
