@@ -39,7 +39,7 @@ public class VectorTest2 {
 
     @BeforeClass
     public static void setUpClass() {
-        largeUnsortedArr = new double[10000];
+        largeUnsortedArr = new double[1000];
         Random rnd = new Random();
         for (int i = 0; i < largeUnsortedArr.length; i++) {
             largeUnsortedArr[i] = rnd.nextDouble();

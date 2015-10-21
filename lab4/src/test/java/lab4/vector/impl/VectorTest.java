@@ -13,10 +13,12 @@ import static org.junit.Assert.*;
  *
  * @author drnewman
  */
-public class VectorTest1 {
+public class VectorTest {
 
-    public VectorTest1() {
+    public VectorTest() {
     }
+
+
 
     @BeforeClass
     public static void setUpClass() {
@@ -502,11 +504,11 @@ public class VectorTest1 {
         // Act
         Object result1 = instance1.clone();
         Vector result2 = instance1.clone();
+        result2.insertElement(4.0, 0);
         result2.insertElement(4.0, 1);
         result2.insertElement(4.0, 2);
         result2.insertElement(4.0, 3);
         result2.insertElement(4.0, 4);
-        result2.insertElement(4.0, 5);
         result2.addElement(4.0);
         // Assert
         assertNotNull(result1);
@@ -536,7 +538,7 @@ public class VectorTest1 {
 
     public class VectorImpl extends LinkedVector {
 
-                public VectorImpl(int size) {
+        public VectorImpl(int size) {
             super();
             for (int i=0;i<size;i++) {
                 super.addElement(0.0);
