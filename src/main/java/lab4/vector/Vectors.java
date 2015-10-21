@@ -2,8 +2,7 @@ package lab4.vector;
 
 public class Vectors {
     public static boolean equalsDoubleWithAccuracy(double fisrtDouble, double secondDouble, double accuracy) {
-        double s = fisrtDouble - secondDouble;
-        return fisrtDouble == secondDouble || ((s <= 0.0D) ? 0.0D - s : s) <= accuracy;
+        return fisrtDouble == secondDouble || Math.abs(fisrtDouble - secondDouble) <= accuracy;
     }
 
     public static void sort(Vector vec, boolean isDesc) {

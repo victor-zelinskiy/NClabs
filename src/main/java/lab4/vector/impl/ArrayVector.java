@@ -6,11 +6,9 @@ import lab4.vector.Vectors;
 import lab4.vector.exception.IncompatibleVectorSizesException;
 import lab4.vector.exception.VectorIndexOutOfBoundsException;
 
-public class ArrayVector implements Vector {
+public class ArrayVector implements Vector, Cloneable {
     private static final double ACCURACY = 0.000001;
-    private static final int INCREASE_FACTOR = 2;
-    protected double[] arr;
-    private int size;
+    protected double[] data;
 
 
     public ArrayVector() {
@@ -18,62 +16,54 @@ public class ArrayVector implements Vector {
     }
 
     public ArrayVector(int size) {
-        arr = new double[size];
-        this.size = size;
+        data = new double[size];
     }
 
-    public ArrayVector(double[] arr) {
-        fillFromMass(arr);
+    public ArrayVector(double[] data) {
+        fillFromMass(data);
     }
 
-    private void rangeSizeCheck(int index) {
-        if (index >= size || index < 0) {
+    private void rangeCheck(int index) {
+        if (index >= data.length || index < 0) {
             throw new VectorIndexOutOfBoundsException();
         }
     }
 
-    private boolean isArrRangeOkCheck(int index) {
-        if (index >= arr.length || index < 0) {
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public double getElement(int index) {
-        rangeSizeCheck(index);
-        return arr[index];
+        rangeCheck(index);
+        return data[index];
     }
 
     @Override
     public void setElement(int index, double elem) {
-        rangeSizeCheck(index);
-        arr[index] = elem;
+        rangeCheck(index);
+        data[index] = elem;
     }
 
     @Override
     public void fillFromMass(double[] arr) {
-        this.arr = new double[arr.length];
-        size = arr.length;
-        System.arraycopy(arr, 0, this.arr, 0, size);
+        this.data = new double[arr.length];
+        System.arraycopy(arr, 0, this.data, 0, this.data.length);
     }
 
     @Override
     public void fillFromVector(Vector vect) {
-        this.arr = new double[vect.getSize()];
-        size = arr.length;
-        for (int i = 0; i < size; i++) {
-            arr[i] = vect.getElement(i);
+        this.data = new double[vect.getSize()];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = vect.getElement(i);
         }
 
     }
 
     @Override
-    public boolean equal(Vector that) {
-        if (this == that) return true;
-        if (that == null) return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (!(o instanceof Vector)) return false;
+        Vector that = (Vector) o;
         if (this.getSize() != that.getSize()) return false;
-
         for (int i = 0; i < this.getSize(); i++) {
             if (!Vectors.equalsDoubleWithAccuracy(this.getElement(i), that.getElement(i), ACCURACY)) {
                 return false;
@@ -84,13 +74,13 @@ public class ArrayVector implements Vector {
 
     @Override
     public int getSize() {
-        return size;
+        return data.length;
     }
 
     public double findMinElem() {
-        double min = arr[0];
-        for (int i = 1; i < size; i++) {
-            double elem = arr[i];
+        double min = data[0];
+        for (int i = 1; i < data.length; i++) {
+            double elem = data[i];
             if (elem < min) {
                 min = elem;
             }
@@ -99,9 +89,9 @@ public class ArrayVector implements Vector {
     }
 
     public double findMaxElem() {
-        double max = arr[0];
-        for (int i = 1; i < size; i++) {
-            double elem = arr[i];
+        double max = data[0];
+        for (int i = 1; i < data.length; i++) {
+            double elem = data[i];
             if (elem > max) {
                 max = elem;
             }
@@ -111,47 +101,72 @@ public class ArrayVector implements Vector {
 
     @Override
     public void mult(double factor) {
-        for (int i = 0; i < size; i++) {
-            arr[i] = arr[i] * factor;
+        for (int i = 0; i < data.length; i++) {
+            data[i] = data[i] * factor;
         }
     }
 
     @Override
     public void sum(Vector vect) throws IncompatibleVectorSizesException {
-        if (this.size != vect.getSize()) {
+        if (this.getSize() != vect.getSize()) {
             throw new IncompatibleVectorSizesException();
         }
 
-        for (int i = 0; i < size; i++) {
-            this.arr[i] = this.arr[i] + vect.getElement(i);
+        for (int i = 0; i < this.data.length; i++) {
+            this.data[i] = this.data[i] + vect.getElement(i);
         }
     }
 
     @Override
     public void addElement(double elem) {
-        if (!isArrRangeOkCheck(++size)) {
-            double[] newArr = new double[size];
-            System.arraycopy(this.arr, 0, newArr, 0, this.arr.length);
-            this.arr = newArr;
-        }
-        this.arr[size - 1] = elem;
+        double[] newArr = new double[data.length + 1];
+        System.arraycopy(data, 0, newArr, 0, data.length);
+        this.data = newArr;
+        this.data[data.length - 1] = elem;
     }
 
     @Override
     public void insertElement(double elem, int index) {
-        rangeSizeCheck(index);
-        double[] newArr = new double[++size];
-        if (index > 0) {
-            System.arraycopy(this.arr, 0, newArr, 0, index - 1);
+        if (index > data.length || index < 0) {
+            throw new VectorIndexOutOfBoundsException();
         }
-        System.arraycopy(this.arr, index, newArr, index + 1, size-1 - index);
+        double[] newArr = new double[data.length + 1];
+        if (index > 0) {
+            System.arraycopy(data, 0, newArr, 0, index);
+        }
+        System.arraycopy(data, index, newArr, index + 1, data.length - index);
         newArr[index] = elem;
-        this.arr = newArr;
+        data = newArr;
     }
 
     @Override
     public void deleteElement(int index) {
+        rangeCheck(index);
+        double[] newArr = new double[data.length - 1];
+        System.arraycopy(data, 0, newArr, 0, index);
+        System.arraycopy(data, index + 1, newArr, index, data.length - index - 1);
+        data = newArr;
+    }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        for (double elem : data) {
+            sb.append(elem).append(' ');
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    @Override
+    public Vector clone() {
+        try {
+            ArrayVector result = (ArrayVector) super.clone();
+            result.data = this.data.clone();
+            return result;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     public void sort() {
@@ -163,7 +178,7 @@ public class ArrayVector implements Vector {
     }
 
     public double[] getData() {
-        return arr;
+        return data;
     }
 
 }

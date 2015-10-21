@@ -1,11 +1,6 @@
 package lab4.vector.impl;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+import lab4.vector.Vector;
 import lab4.vector.exception.IncompatibleVectorSizesException;
 import lab4.vector.exception.VectorIndexOutOfBoundsException;
 import org.junit.AfterClass;
@@ -117,6 +112,7 @@ public class VectorTest1 {
         // Assert
 
     }
+
 
     /**
      * Test of getSize method, of class Vector.
@@ -251,7 +247,7 @@ public class VectorTest1 {
         vector.setData(newMass);
         // Act
         instance.sum(vector);
-        // Assert
+        // Assert        
     }
 
     @Test(expected = IncompatibleVectorSizesException.class)
@@ -266,7 +262,7 @@ public class VectorTest1 {
         vector.setData(newMass);
         // Act
         instance.sum(vector);
-        // Assert
+        // Assert        
     }
 
 
@@ -301,8 +297,7 @@ public class VectorTest1 {
         double[] mass2 = {5.0, -2.9, 7.7, 0.0, -50000, 9};
         double[] mass3 = {7.7, 5.0, -2.9, 0.0, -50000, 9};
         double element = 7.7;
-        int index1 = 4;
-        //int index1 = 5;
+        int index1 = 5;
         int index2 = 2;
         int index3 = 0;
         VectorImpl instance1 = new VectorImpl(5);
@@ -472,10 +467,11 @@ public class VectorTest1 {
         assertFalse(result4);
     }
 
+
     /**
      * Test of clone method, of class Vector.
      */
-    /*@Test
+    @Test
     public void testClone() throws Exception {
         System.out.println("clone");
         // Arrange
@@ -490,24 +486,86 @@ public class VectorTest1 {
         assertNotNull(result1);
         assertTrue(instance.getClass() == result1.getClass());
         assertArrayEquals(original, ((VectorImpl)result1).getData(), 0.0);
-    }*/
+    }
+
+
+
+
+
+    @Test
+    public void testCloneDeep() throws Exception {
+        System.out.println("deepClone");
+        // Arrange
+        double[] original = {5.0, -2.9, 0.0, -50000, 9};
+        VectorImpl instance1 = new VectorImpl(5);
+        instance1.setData(original);
+        // Act
+        Object result1 = instance1.clone();
+        Vector result2 = instance1.clone();
+        result2.insertElement(4.0, 1);
+        result2.insertElement(4.0, 2);
+        result2.insertElement(4.0, 3);
+        result2.insertElement(4.0, 4);
+        result2.insertElement(4.0, 5);
+        result2.addElement(4.0);
+        // Assert
+        assertNotNull(result1);
+        assertTrue(instance1.getClass() == result1.getClass());
+        assertArrayEquals(original, ((VectorImpl)result1).getData(), 0.0);
+    }
 
     //For ArrayVector implimentation testing
-    public class VectorImpl extends ArrayVector {
+
+/*    public class VectorImpl extends ArrayVector {
 
         public VectorImpl(int size) {
             super(size);
         }
 
         public double[] getData() {
-            return super.arr;
+            return super.data;
         }
 
         public void setData(double[] data) {
-            super.arr = data;
+            super.data = data;
+        }
+
+    }*/
+
+    //For LinkedVector implimentation testing
+
+    public class VectorImpl extends LinkedVector {
+
+                public VectorImpl(int size) {
+            super();
+            for (int i=0;i<size;i++) {
+                super.addElement(0.0);
+            }
+        }
+
+        public double[] getData() {
+            double[] data = new double[size];
+            for (int i=0; i<size;i++) {
+                data[i] = super.goToElement(i).element;
+            }
+            return data;
+        }
+
+
+        public void setData(double[] data) {
+            for (int i=0; i<data.length;i++) {
+                if (i == 0) {
+                    head = new Nod(data[0]);
+                    head.prev = head;
+                    head.next = head;
+                } else {
+                    insertElementBefore(head, new Nod(data[i]));
+                }
+
+            }
+
         }
 
     }
-
 
 }

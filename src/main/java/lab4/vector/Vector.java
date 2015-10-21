@@ -11,7 +11,7 @@ public interface Vector {
 
     void fillFromVector(Vector vect);
 
-    boolean equal(Vector that);
+    boolean equals(Object that);
 
     int getSize();
 
@@ -24,4 +24,8 @@ public interface Vector {
     void insertElement(double elem, int index);
 
     void deleteElement(int index);
+
+    String toString();
+
+    Vector clone() throws CloneNotSupportedException;
 }
