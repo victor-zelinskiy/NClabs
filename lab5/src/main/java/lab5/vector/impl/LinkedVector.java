@@ -1,12 +1,18 @@
-package lab4.vector.impl;
+package lab5.vector.impl;
 
-import lab4.vector.Vector;
-import lab4.vector.Vectors;
-import lab4.vector.exception.IncompatibleVectorSizesException;
-import lab4.vector.exception.VectorIndexOutOfBoundsException;
+import lab5.vector.Vector;
+import lab5.vector.Vectors;
+import lab5.vector.exception.IncompatibleVectorSizesException;
+import lab5.vector.exception.VectorIndexOutOfBoundsException;
 
-public class LinkedVector implements Vector, Cloneable {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class LinkedVector implements Vector, Cloneable, Serializable {
     private static final double ACCURACY = 0.000001;
+    private static final long serialVersionUID = -8520216300991932022L;
 
 
     class Nod implements Cloneable {
@@ -40,8 +46,8 @@ public class LinkedVector implements Vector, Cloneable {
         }
     }
 
-    protected Nod head;
-    protected int size;
+    protected transient Nod head;
+    protected transient int size;
 
     public LinkedVector() {
     }
@@ -234,4 +240,21 @@ public class LinkedVector implements Vector, Cloneable {
         }
     }
 
+    private void writeObject(ObjectOutputStream stream)
+            throws IOException {
+        stream.defaultWriteObject();
+        stream.writeInt(size);
+        stream.writeDouble(head.element);
+        for (Nod e = head.next; e != head; e = e.next)
+            stream.writeDouble(e.element);
+    }
+
+    private void readObject(ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        int size = stream.readInt();
+        for (int i = 0; i < size; i++) {
+            addElement(stream.readDouble());
+        }
+    }
 }

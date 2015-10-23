@@ -1,13 +1,16 @@
-package lab4.vector.impl;
+package lab5.vector.impl;
 
 
-import lab4.vector.Vector;
-import lab4.vector.Vectors;
-import lab4.vector.exception.IncompatibleVectorSizesException;
-import lab4.vector.exception.VectorIndexOutOfBoundsException;
+import lab5.vector.Vector;
+import lab5.vector.Vectors;
+import lab5.vector.exception.IncompatibleVectorSizesException;
+import lab5.vector.exception.VectorIndexOutOfBoundsException;
 
-public class ArrayVector implements Vector, Cloneable {
+import java.io.Serializable;
+
+public class ArrayVector implements Vector, Cloneable, Serializable {
     private static final double ACCURACY = 0.000001;
+    private static final long serialVersionUID = 3872661292085813407L;
     protected double[] data;
 
 
@@ -43,13 +46,13 @@ public class ArrayVector implements Vector, Cloneable {
     }
 
     @Override
-    public void fillFromMass(double[] arr) {
+    public final void fillFromMass(double[] arr) {
         this.data = new double[arr.length];
         System.arraycopy(arr, 0, this.data, 0, this.data.length);
     }
 
     @Override
-    public void fillFromVector(Vector vect) {
+    public final void fillFromVector(Vector vect) {
         this.data = new double[vect.getSize()];
         for (int i = 0; i < data.length; i++) {
             data[i] = vect.getElement(i);
