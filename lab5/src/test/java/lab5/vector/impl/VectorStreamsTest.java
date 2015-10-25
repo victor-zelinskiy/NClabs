@@ -2,8 +2,9 @@ package lab5.vector.impl;
 
 import lab5.vector.Vector;
 import lab5.vector.Vectors;
-import org.junit.*;
-import org.junit.rules.TemporaryFolder;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -11,22 +12,12 @@ import java.nio.ByteBuffer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VectorStreamsTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    //private static File file = new File(VectorStreamsTest.class.getResource("/test").getFile());
-    private static File file;
-
 
     @BeforeClass
     public static void setUpClass() {
-        file = new File("/home/victor/test/test.txt");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-            }
-        }
+
     }
+
 
     @AfterClass
     public static void tearDownClass() {
@@ -36,7 +27,7 @@ public class VectorStreamsTest {
     public void inputVector() throws Exception {
         double[] data = new double[]{2.4, 1.2, -4, 10.2, 0.1};
         Vector expectVector = new ArrayVector(data);
-        File testFile = folder.newFile();
+        File testFile = createFileIfNotExist("inputVector");
 
         byte[] bytes = new byte[4 + data.length * 8];
         int i = 0;
@@ -83,7 +74,7 @@ public class VectorStreamsTest {
     public void inputOutputVector() throws Exception {
         double[] expectArr = new double[]{2.4, 1.2, -4, 10.2, 0.1};
         Vector expectVector = new ArrayVector(expectArr);
-        File tempFile = folder.newFile();
+        File tempFile = createFileIfNotExist("inputOutputVector");
 
         try (OutputStream os = new FileOutputStream(tempFile)) {
             Vectors.outputVector(expectVector, os);
@@ -93,6 +84,27 @@ public class VectorStreamsTest {
         try (InputStream is = new FileInputStream(tempFile)) {
             Vector resultVector = Vectors.inputVector(is);
             assertThat(resultVector).isEqualTo(expectVector);
+        }
+    }
+
+    @Test
+    public void inputOutputVector2() throws Exception {
+        double[] arr1 = new double[]{2.4, 1.2, -4, 10.2, 0.1};
+        double[] arr2 = new double[]{1.4, 2.2, 4, 0.2, -0.1};
+        Vector expectVector1 = new ArrayVector(arr1);
+        Vector expectVector2 = new ArrayVector(arr2);
+        File tempFile = createFileIfNotExist("inputOutputVector2");
+
+        try (OutputStream os = new FileOutputStream(tempFile)) {
+            Vectors.outputVector(expectVector1, os);
+            Vectors.outputVector(expectVector2, os);
+        }
+
+        try (InputStream is = new FileInputStream(tempFile)) {
+            Vector resultVector1 = Vectors.inputVector(is);
+            Vector resultVector2 = Vectors.inputVector(is);
+            assertThat(resultVector1).isEqualTo(expectVector1);
+            assertThat(resultVector2).isEqualTo(expectVector2);
         }
     }
 
@@ -124,10 +136,10 @@ public class VectorStreamsTest {
 
 
     @Test
-    public void inputWriteReadVector() throws Exception {
+    public void writeRead() throws Exception {
         double[] arr = new double[]{2.4, 1.2, -4, 10.2, 0.1};
         Vector expectVector = new ArrayVector(arr);
-        File tempFile = file;
+        File tempFile = createFileIfNotExist("writeRead");;
         try (Writer writer = new FileWriter(tempFile)) {
             Vectors.writeVector(expectVector, writer);
         }
@@ -141,15 +153,16 @@ public class VectorStreamsTest {
     }
 
     @Test
-    public void inputWriteReadVector2() throws Exception {
+    public void writeRead2() throws Exception {
         double[] arr1 = new double[]{4.2, 1.2, -4, 10.2, 1.1};
         double[] arr2 = new double[]{2.4, 1.2, -4, 10.2, 0.1};
         Vector expectVector1 = new ArrayVector(arr1);
         Vector expectVector2 = new ArrayVector(arr2);
-        File tempFile = file;
+        File tempFile = createFileIfNotExist("writeRead2");;
         try (Writer writer = new FileWriter(tempFile)) {
             Vectors.writeVector(expectVector1, writer);
             Vectors.writeVector(expectVector2, writer);
+            Vectors.writeVector(expectVector1, writer);
         }
 
         printFileToConsole(tempFile);
@@ -157,15 +170,17 @@ public class VectorStreamsTest {
         try (Reader reader = new FileReader(tempFile)) {
             Vector resultVector1 = Vectors.readVector(reader);
             Vector resultVector2 = Vectors.readVector(reader);
+            Vector resultVector3 = Vectors.readVector(reader);
             assertThat(resultVector1).isEqualTo(expectVector1);
             assertThat(resultVector2).isEqualTo(expectVector2);
+            assertThat(resultVector3).isEqualTo(expectVector1);
         }
     }
 
     @Test
     public void linkedVectorSerialization() throws Exception {
         LinkedVector expectVector = new LinkedVector(new double[]{2.4, 1.2, -4, 10.2, 0.1});
-        File testFile = folder.newFile();
+        File testFile = createFileIfNotExist("linkedVectorSerialization");;
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(testFile))) {
             oos.writeObject(expectVector);
         }
@@ -182,7 +197,7 @@ public class VectorStreamsTest {
     @Test
     public void arrayVectorSerialization() throws Exception {
         ArrayVector expectVector = new ArrayVector(new double[]{2.4, 1.2, -4, 10.2, 0.1});
-        File testFile = folder.newFile();
+        File testFile = createFileIfNotExist("arrayVectorSerialization");;
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(testFile))) {
             oos.writeObject(expectVector);
         }
@@ -196,7 +211,6 @@ public class VectorStreamsTest {
     }
 
 
-
     private void printFileToConsole(File file) throws IOException {
         try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             String line;
@@ -204,5 +218,17 @@ public class VectorStreamsTest {
                 System.out.println(line);
             }
         }
+    }
+
+    private File createFileIfNotExist(String name) throws IOException {
+        File dir = new File(VectorStreamsTest.class.getResource("/").getPath() + "resources");
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        File result = new File(dir.getPath() + "/" + name + ".txt");
+        if (!result.exists()) {
+            result.createNewFile();
+        }
+        return result;
     }
 }
