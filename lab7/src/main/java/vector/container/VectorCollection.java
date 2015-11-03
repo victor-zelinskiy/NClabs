@@ -5,80 +5,70 @@ import lab5.vector.Vector;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class VectorCollection implements Collection {
-    private Vector[] data = new Vector[0];
+    private Vector[] data = new Vector[10];
+    private int size;
 
     @Override
     public int size() {
-        return data.length;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return (size() == 0);
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        for (Vector elem : data) {
-            if (elem == o || elem.equals(o)) return true;
+        for (int i = 0; i < size; i++) {
+            Vector elem = data[i];
+            if (o == elem || o.equals(elem)) return true;
         }
         return false;
     }
 
     @Override
     public Iterator iterator() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public Object[] toArray() {
-        return Arrays.copyOf(data, data.length);
+        return Arrays.copyOf(data, size);
     }
 
     @Override
     public boolean add(Object o) {
-        if (!(o instanceof Vector)) return false;
-        Vector newElem = (Vector) o;
-        Vector[] newArr = new Vector[data.length + 1];
-        System.arraycopy(data, 0, newArr, 0, data.length);
-        this.data = newArr;
-        this.data[data.length - 1] = newElem;
+        if (Objects.nonNull(o) && !(o instanceof Vector)) return false;
+        if (size == data.length) {
+            increaseDataArr();
+        }
+        data[size++] = (Vector) o;
         return true;
     }
+
+    private void increaseDataArr() {
+        data = Arrays.copyOf(data, (int) (size*1.5));
+    }
+
 
     @Override
     public boolean remove(Object o) {
-        Vector[] newArr = new Vector[data.length - 1];
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] == o || data[i].equals(o)) {
-                System.arraycopy(data, 0, newArr, 0, i);
-                System.arraycopy(data, i + 1, newArr, i, data.length - i - 1);
-                data = newArr;
-                return true;
-            }
-        }
+
         return false;
-
     }
-
-
 
     @Override
     public boolean addAll(Collection c) {
-        if (!(c instanceof VectorCollection)) return false;
-        VectorCollection v = (VectorCollection) c;
-        Vector[] newArr = new Vector[data.length + v.data.length];
-        System.arraycopy(data, 0, newArr, 0, data.length);
-        System.arraycopy(v.data, 0, newArr, data.length + 1, v.data.length);
-        this.data = newArr;
-        return true;
+        return false;
     }
 
     @Override
     public void clear() {
-        data = new Vector[0];
+
     }
 
     @Override
@@ -98,8 +88,9 @@ public class VectorCollection implements Collection {
 
     @Override
     public Object[] toArray(Object[] a) {
-        return null;
+        if (a.length < size) return toArray();
+        if (a.length > size) a[size] = null;
+        System.arraycopy(data, 0, a, 0, size);
+        return a;
     }
-
-
 }
