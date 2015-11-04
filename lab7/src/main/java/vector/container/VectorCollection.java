@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.jar.Pack200;
 
 public class VectorCollection implements Collection {
     private Vector[] data = new Vector[10];
@@ -91,6 +90,7 @@ public class VectorCollection implements Collection {
     @Override
     public boolean addAll(Collection c) {
         Object[] addArr = c.toArray();
+        if (addArr.length == 0) return false;
         for (Object elem : addArr) {
             if (!(elem instanceof Vector)) return false;
         }
