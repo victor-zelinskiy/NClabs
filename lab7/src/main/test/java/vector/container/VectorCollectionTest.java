@@ -5,17 +5,13 @@ import lab5.vector.impl.ArrayVector;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.atIndex;
 
 
 public class VectorCollectionTest {
-
-
 
     @Test
     public void testSize() throws Exception {
@@ -28,7 +24,11 @@ public class VectorCollectionTest {
 
     @Test
     public void testIsEmpty() throws Exception {
+        Collection collection = new VectorCollection();
+        assertThat(collection.isEmpty()).isTrue();
 
+        collection.add(new ArrayVector());
+        assertThat(collection.isEmpty()).isFalse();
     }
 
     @Test
@@ -53,7 +53,19 @@ public class VectorCollectionTest {
 
     @Test
     public void testToArray() throws Exception {
+        Collection collection = new VectorCollection();
+        Vector[] vectors = {
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9)
+        };
 
+        collection.addAll(Arrays.asList(vectors));
+
+        assertThat(collection.toArray()).containsExactly(vectors);
     }
 
     @Test
@@ -108,21 +120,139 @@ public class VectorCollectionTest {
 
     @Test
     public void testRetainAll() throws Exception {
+        Collection collection = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(4),
+                new ArrayVector(5),
+                new ArrayVector(6),
+                new ArrayVector(7),
+                new ArrayVector(8),
+                new ArrayVector(9),
+                new ArrayVector(10)
+        ));
 
+        Collection collectionRemove = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9),
+                new ArrayVector(11)
+        ));
+        collection.retainAll(collectionRemove);
+        assertThat(collection.size()).isEqualTo(6);
+        assertThat(collection.toArray()).containsExactly(new Vector[] {
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9)
+        });
     }
 
     @Test
     public void testRemoveAll() throws Exception {
+        Collection collection = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(4),
+                new ArrayVector(5),
+                new ArrayVector(6),
+                new ArrayVector(7),
+                new ArrayVector(8),
+                new ArrayVector(9),
+                new ArrayVector(10)
+                ));
 
+        Collection collectionRemove = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9),
+                new ArrayVector(11)
+        ));
+        collection.removeAll(collectionRemove);
+        assertThat(collection.size()).isEqualTo(4);
+        assertThat(collection.toArray()).containsExactly(new Vector[] {
+                new ArrayVector(4),
+                new ArrayVector(6),
+                new ArrayVector(8),
+                new ArrayVector(10)
+        });
     }
 
     @Test
     public void testContainsAll() throws Exception {
+        Collection collection = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(4),
+                new ArrayVector(5),
+                new ArrayVector(6),
+                new ArrayVector(7),
+                new ArrayVector(8),
+                new ArrayVector(9),
+                new ArrayVector(10)
+        ));
+
+        Collection collectionFalse = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9),
+                new ArrayVector(11)
+        ));
+
+        Collection collectionTrue = new VectorCollection(Arrays.asList(
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9)
+        ));
+
+        assertThat(collection.containsAll(collectionFalse)).isFalse();
+        assertThat(collection.containsAll(collectionTrue)).isTrue();
 
     }
 
     @Test
     public void testToArray1() throws Exception {
+        Collection collection = new VectorCollection();
+        Vector[] vectors = {
+                new ArrayVector(10),
+                new ArrayVector(20),
+        };
 
+        Vector[] vectors1 = {
+                new ArrayVector(1),
+                new ArrayVector(2),
+                new ArrayVector(3),
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9)
+        };
+
+        collection.addAll(Arrays.asList(vectors));
+
+        vectors1 = (Vector[]) collection.toArray(vectors1);
+
+        assertThat(vectors1).containsExactly(new ArrayVector(10),
+                new ArrayVector(20),
+                null,
+                new ArrayVector(5),
+                new ArrayVector(7),
+                new ArrayVector(9));
     }
 }

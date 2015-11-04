@@ -43,7 +43,7 @@ public class VectorCollection implements Collection {
     public boolean remove(Object o) {
         int removeIndex;
         if ((removeIndex = indexOf(o)) >= 0) {
-            System.arraycopy(data, removeIndex+1, data, removeIndex, size - removeIndex - 1);
+            System.arraycopy(data, removeIndex + 1, data, removeIndex, size - removeIndex - 1);
             data[--size] = null;
             return true;
         } else return false;
@@ -79,12 +79,9 @@ public class VectorCollection implements Collection {
     }
 
 
-
     private void increaseDataArr(int minLength) {
-        data = Arrays.copyOf(data, (int) (minLength*1.5));
+        data = Arrays.copyOf(data, (int) (minLength * 1.5));
     }
-
-
 
 
     @Override
@@ -112,19 +109,48 @@ public class VectorCollection implements Collection {
         size = 0;
     }
 
-    @Override
-    public boolean retainAll(Collection c) {
-        return false;
-    }
 
     @Override
     public boolean removeAll(Collection c) {
-        return false;
+        Objects.requireNonNull(c);
+        return removeOrRetain(c, false);
+    }
+
+    @Override
+    public boolean retainAll(Collection c) {
+        Objects.requireNonNull(c);
+        return removeOrRetain(c, true);
+    }
+
+    private boolean removeOrRetain(Collection c, boolean isRetain) {
+        Object[] removeArr = c.toArray();
+        if (removeArr.length == 0) return false;
+
+        int validIndex = 0;
+        for (int i = 0; i < size; i++) {
+            if (c.contains(data[i]) == isRetain) {
+                data[validIndex++] = data[i];
+            }
+        }
+
+        if (validIndex != size) {
+            Arrays.fill(data, validIndex, size, null);
+            size = validIndex;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean containsAll(Collection c) {
-        return false;
+        Object[] arr = c.toArray();
+        for (Object elem : arr) {
+            if (!contains(elem)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
