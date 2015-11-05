@@ -71,7 +71,6 @@ public class VectorCollectionTest {
     @Test
     public void testAdd() throws Exception {
         Collection collection = new VectorCollection();
-        assertThat(collection.add(new ArrayList())).isFalse();
         assertThat(collection.add(new ArrayVector())).isTrue();
         assertThat(collection.add(null)).isTrue();
     }

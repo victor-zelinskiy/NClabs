@@ -6,10 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class VectorCollection implements Collection {
-    private Vector[] data = new Vector[10];
-    private int size;
+    protected Vector[] data = new Vector[10];
+    protected int size;
 
 
     public VectorCollection() {
@@ -31,12 +32,16 @@ public class VectorCollection implements Collection {
 
     @Override
     public boolean add(Object o) {
-        if (Objects.nonNull(o) && !(o instanceof Vector)) return false;
+        argumentCheck(o);
         if (size >= data.length) {
             increaseDataArr(data.length + 1);
         }
         data[size++] = (Vector) o;
         return true;
+    }
+
+    protected void argumentCheck(Object o) {
+        if (Objects.nonNull(o) && !(o instanceof Vector)) throw new IllegalArgumentException();
     }
 
     @Override
@@ -54,14 +59,18 @@ public class VectorCollection implements Collection {
         return indexOf(o) >= 0;
     }
 
-    private int indexOf(Object o) {
+    protected int indexOf(Object o) {
+        return searchFrom(0, (i) -> i < size, o);
+    }
+
+    protected int searchFrom(int startIndex, Predicate<Integer> condition, Object o) {
         if ((o != null) && !(o instanceof Vector)) return -1;
         if (o == null) {
-            for (int i = 0; i < size; i++) {
+            for (int i = startIndex;  condition.test(i); i++) {
                 if (data[i] == null) return i;
             }
         } else {
-            for (int i = 0; i < size; i++) {
+            for (int i = startIndex; condition.test(i); i++) {
                 if (o.equals(data[i])) return i;
             }
         }
@@ -79,7 +88,7 @@ public class VectorCollection implements Collection {
     }
 
 
-    private void increaseDataArr(int minLength) {
+    protected void increaseDataArr(int minLength) {
         data = Arrays.copyOf(data, (int) (minLength * 1.5));
     }
 
@@ -89,7 +98,7 @@ public class VectorCollection implements Collection {
         Object[] addArr = c.toArray();
         if (addArr.length == 0) return false;
         for (Object elem : addArr) {
-            if (!(elem instanceof Vector)) return false;
+            argumentCheck(elem);
         }
 
         int newSize = size + addArr.length;
