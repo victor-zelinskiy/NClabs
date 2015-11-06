@@ -2,6 +2,7 @@ package vector.container;
 
 import lab5.vector.Vector;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
@@ -15,9 +16,32 @@ public class VectorList extends VectorCollection implements List {
         super(c);
     }
 
+    private VectorList(int size, Vector[] data) {
+        this.size = size;
+        this.data = data;
+    }
+
     @Override
     public boolean addAll(int index, Collection c) {
-        return false;
+        rangeCheck(index);
+        Object[] addArr = c.toArray();
+        if (addArr.length == 0) return false;
+        for (Object elem : addArr) {
+            argumentCheck(elem);
+        }
+
+        int newSize = size + addArr.length;
+        while (newSize >= data.length) {
+            increaseDataArr(newSize);
+        }
+
+        if (index < size) {
+            System.arraycopy(data, index, data, index + addArr.length, size - index);
+        }
+
+        System.arraycopy(addArr, 0, data, index, addArr.length);
+        size = newSize;
+        return true;
     }
 
     @Override
@@ -80,10 +104,10 @@ public class VectorList extends VectorCollection implements List {
 
     @Override
     public List subList(int fromIndex, int toIndex) {
-        return null;
+        return new VectorList((toIndex - fromIndex), Arrays.copyOfRange(data, fromIndex, toIndex));
     }
 
-    private void rangeCheck(int index) {
+    protected void rangeCheck(int index) {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException();
         }

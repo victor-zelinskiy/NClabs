@@ -44,6 +44,8 @@ public class VectorCollection implements Collection {
         if (Objects.nonNull(o) && !(o instanceof Vector)) throw new IllegalArgumentException();
     }
 
+
+
     @Override
     public boolean remove(Object o) {
         int removeIndex = indexOf(o);
