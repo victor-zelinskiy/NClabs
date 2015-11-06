@@ -50,7 +50,11 @@ public class VectorList extends VectorCollection implements List {
 
     @Override
     public Object remove(int index) {
-        return null;
+        rangeCheck(index);
+        Vector oldElem = data[index];
+        System.arraycopy(data, index + 1, data, index, size - index - 1);
+        data[--size] = null;
+        return oldElem;
     }
 
     @Override

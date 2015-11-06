@@ -46,8 +46,8 @@ public class VectorCollection implements Collection {
 
     @Override
     public boolean remove(Object o) {
-        int removeIndex;
-        if ((removeIndex = indexOf(o)) >= 0) {
+        int removeIndex = indexOf(o);
+        if (removeIndex >= 0) {
             System.arraycopy(data, removeIndex + 1, data, removeIndex, size - removeIndex - 1);
             data[--size] = null;
             return true;
@@ -63,14 +63,14 @@ public class VectorCollection implements Collection {
         return searchFrom(0, (i) -> i < size, o);
     }
 
-    protected int searchFrom(int startIndex, Predicate<Integer> condition, Object o) {
+    protected int searchFrom(int startIndex, Predicate<Integer> p, Object o) {
         if ((o != null) && !(o instanceof Vector)) return -1;
         if (o == null) {
-            for (int i = startIndex;  condition.test(i); i++) {
+            for (int i = startIndex;  p.test(i); i++) {
                 if (data[i] == null) return i;
             }
         } else {
-            for (int i = startIndex; condition.test(i); i++) {
+            for (int i = startIndex; p.test(i); i++) {
                 if (o.equals(data[i])) return i;
             }
         }
