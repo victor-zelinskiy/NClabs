@@ -104,6 +104,9 @@ public class VectorList extends VectorCollection implements List {
 
     @Override
     public List subList(int fromIndex, int toIndex) {
+        if (fromIndex < 0 || fromIndex >= toIndex || toIndex > size) {
+            throw new IndexOutOfBoundsException();
+        }
         return new VectorList((toIndex - fromIndex), Arrays.copyOfRange(data, fromIndex, toIndex));
     }
 
