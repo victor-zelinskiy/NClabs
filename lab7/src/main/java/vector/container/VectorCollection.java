@@ -1,6 +1,7 @@
 package vector.container;
 
-import lab5.vector.Vector;
+
+import vector.Vector;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,7 +45,11 @@ public class VectorCollection implements Collection {
         if (Objects.nonNull(o) && !(o instanceof Vector)) throw new IllegalArgumentException();
     }
 
-
+    protected void rangeCheck(int index) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
 
     @Override
     public boolean remove(Object o) {

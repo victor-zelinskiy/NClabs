@@ -1,8 +1,10 @@
 package vector.container;
 
-import lab5.vector.Vector;
-import lab5.vector.impl.ArrayVector;
+
 import org.junit.Test;
+import vector.Vector;
+import vector.impl.ArrayVector;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

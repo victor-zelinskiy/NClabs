@@ -1,6 +1,7 @@
 package vector.container;
 
-import lab5.vector.Vector;
+
+import vector.Vector;
 
 import java.util.Arrays;
 import java.util.Collection;
