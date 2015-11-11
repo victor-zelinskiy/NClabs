@@ -191,22 +191,22 @@ public class VectorMap implements Map {
 
     @Override
     public Collection values() {
-        return new ArrayList(getData(entry -> entry.value));
+        return new ArrayList(getEntryData(entry -> entry.value));
     }
 
     @Override
     public Set keySet() {
-        return new HashSet(getData(entry -> entry.key));
+        return new HashSet(getEntryData(entry -> entry.key));
     }
 
 
     @Override
     public Set<Entry> entrySet() {
-        return new HashSet(getData(entry -> entry));
+        return new HashSet(getEntryData(entry -> entry));
     }
 
 
-    private Collection getData(Function<VectorEntry, Object> function) {
+    private Collection getEntryData(Function<VectorEntry, Object> function) {
         ArrayList result = new ArrayList();
         for (VectorEntry elem : data) {
             if (elem != null) {
