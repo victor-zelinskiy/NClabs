@@ -3,7 +3,6 @@ package vector.container;
 import vector.Vector;
 
 import java.util.*;
-import java.util.function.Function;
 
 
 public class VectorMap<K, V extends Vector> implements Map<K, V> {
@@ -193,19 +192,15 @@ public class VectorMap<K, V extends Vector> implements Map<K, V> {
     }
 
 
-//    @Override
-//    public Collection<V> values() {
-//        return new ArrayList<V>(getEntryData(entry -> entry.value));
-//    }
 
     @Override
     public Collection<V> values() {
-        ArrayList<V> result = new ArrayList<>();
-        for (VectorEntry elem : data) {
+        List<V> result = new ArrayList<>();
+        for (VectorEntry<K,V> elem : data) {
             if (elem != null) {
-                VectorEntry current = elem;
+                VectorEntry<K,V> current = elem;
                 while (current != null) {
-                    result.add((V) current.value);
+                    result.add(current.value);
                     current = current.next;
                 }
             }
@@ -215,29 +210,34 @@ public class VectorMap<K, V extends Vector> implements Map<K, V> {
 
     @Override
     public Set<K> keySet() {
-        return new HashSet<K>(getEntryData(entry -> entry.key));
-    }
-
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return new HashSet<Entry<K, V>>(getEntryData(entry -> entry));
-    }
-
-
-    private Collection getEntryData(Function<VectorEntry, Object> function) {
-        ArrayList result = new ArrayList();
-        for (VectorEntry elem : data) {
+        Set<K> result = new HashSet<>();
+        for (VectorEntry<K,V> elem : data) {
             if (elem != null) {
-                VectorEntry current = elem;
+                VectorEntry<K,V> current = elem;
                 while (current != null) {
-                    result.add(function.apply(current));
+                    result.add(current.key);
                     current = current.next;
                 }
             }
         }
         return result;
     }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        Set<Entry<K, V>> result = new HashSet<>();
+        for (VectorEntry<K,V> elem : data) {
+            if (elem != null) {
+                VectorEntry<K,V> current = elem;
+                while (current != null) {
+                    result.add(current);
+                    current = current.next;
+                }
+            }
+        }
+        return result;
+    }
+
 
     private int hashForKey(Object key) {
         return (key == null) ? 0 : Math.abs(key.hashCode()) % capacity;
