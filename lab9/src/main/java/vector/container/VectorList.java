@@ -25,7 +25,7 @@ public class VectorList<E extends Vector> extends VectorCollection<E> implements
 
 
     @Override
-    public boolean addAll(int index, Collection c) {
+    public boolean addAll(int index, Collection<? extends E> c) {
         rangeCheck(index);
         Object[] addArr = c.toArray();
         if (addArr.length == 0) return false;

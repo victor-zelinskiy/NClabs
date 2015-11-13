@@ -21,7 +21,7 @@ public class VectorCollection<E extends Vector> implements Collection<E> {
         addAll(Arrays.asList(vectors));
     }
 
-    public VectorCollection(Collection<E> c) {
+    public VectorCollection(Collection<? extends E> c) {
         addAll(c);
     }
 
@@ -114,7 +114,7 @@ public class VectorCollection<E extends Vector> implements Collection<E> {
 
 
     @Override
-    public boolean addAll(Collection c) {
+    public boolean addAll(Collection<? extends E> c) {
         Object[] addArr = c.toArray();
         if (addArr.length == 0) return false;
         for (Object elem : addArr) {
@@ -140,18 +140,18 @@ public class VectorCollection<E extends Vector> implements Collection<E> {
 
 
     @Override
-    public boolean removeAll(Collection c) {
+    public boolean removeAll(Collection<?> c) {
         Objects.requireNonNull(c);
         return removeOrRetain(c, false);
     }
 
     @Override
-    public boolean retainAll(Collection c) {
+    public boolean retainAll(Collection<?> c) {
         Objects.requireNonNull(c);
         return removeOrRetain(c, true);
     }
 
-    private boolean removeOrRetain(Collection c, boolean isRetain) {
+    private boolean removeOrRetain(Collection<?> c, boolean isRetain) {
         Object[] removeArr = c.toArray();
         if (removeArr.length == 0) return false;
 
@@ -172,7 +172,7 @@ public class VectorCollection<E extends Vector> implements Collection<E> {
     }
 
     @Override
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(Collection<?> c) {
         Object[] arr = c.toArray();
         for (Object elem : arr) {
             if (!contains(elem)) {

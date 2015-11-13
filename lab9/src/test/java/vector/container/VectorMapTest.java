@@ -10,13 +10,13 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class VectorMapTest {
-    private Map createMap() {
-        return new VectorMap<Object, ArrayVector>();
+    private Map<Object, ArrayVector> createMap() {
+        return new VectorMap<>();
     }
 
     @Test
     public void testSize() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         assertThat(map.size()).isEqualTo(0);
         map.put(new ArrayVector(1), new ArrayVector(2));
         assertThat(map.size()).isEqualTo(1);
@@ -26,7 +26,7 @@ public class VectorMapTest {
 
     @Test
     public void testIsEmpty() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         assertThat(map.isEmpty()).isTrue();
         map.put(new ArrayVector(1), new ArrayVector(2));
         assertThat(map.isEmpty()).isFalse();
@@ -34,7 +34,7 @@ public class VectorMapTest {
 
     @Test
     public void testContainsKey() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector key = new ArrayVector(2);
         ArrayVector key2 = new ArrayVector(3);
         assertThat(map.containsKey(key)).isFalse();
@@ -47,7 +47,7 @@ public class VectorMapTest {
 
     @Test
     public void testContainsValue() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector value = new ArrayVector(2);
         assertThat(map.containsValue(value)).isFalse();
         value = new ArrayVector(1);
@@ -57,7 +57,7 @@ public class VectorMapTest {
 
     @Test
     public void testGet() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector key = new ArrayVector(2);
         ArrayVector value = new ArrayVector(1);
         map.put(key, null);
@@ -68,7 +68,7 @@ public class VectorMapTest {
 
     @Test
     public void testPut() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector prevValue = new ArrayVector(1);
         ArrayVector newValue = new ArrayVector(2);
         ArrayVector key = new ArrayVector(3);
@@ -80,7 +80,7 @@ public class VectorMapTest {
 
     @Test
     public void testRemove() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector value = new ArrayVector(1);
         ArrayVector key = new ArrayVector(3);
         map.put(key, value);
@@ -92,8 +92,8 @@ public class VectorMapTest {
 
     @Test
     public void testPutAll() throws Exception {
-        Map map = createMap();
-        Map addMap = createMap();
+        Map<Object, ArrayVector> map = createMap();
+        Map<Object, ArrayVector> addMap = createMap();
         for (int i = 0; i < 100; i++) {
             addMap.put(new ArrayVector(i), new ArrayVector(i+1));
         }
@@ -105,7 +105,7 @@ public class VectorMapTest {
 
     @Test
     public void testClear() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         for (int i = 0; i < 100; i++) {
             map.put(new ArrayVector(i), new ArrayVector(i+1));
         }
@@ -117,7 +117,7 @@ public class VectorMapTest {
 
     @Test
     public void testKeySet() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector[] arr = new ArrayVector[100];
         for (int i = 0; i < 100; i++) {
             arr[i] = new ArrayVector(new double[] {i});
@@ -130,7 +130,7 @@ public class VectorMapTest {
 
     @Test
     public void testValues() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector[] arr = new ArrayVector[100];
         for (int i = 0; i < 100; i++) {
             arr[i] = new ArrayVector(new double[] {i});
@@ -142,7 +142,7 @@ public class VectorMapTest {
 
     @Test
     public void testEntrySet() throws Exception {
-        Map map = createMap();
+        Map<Object, ArrayVector> map = createMap();
         ArrayVector[] keys = new ArrayVector[10];
         ArrayVector[] values = new ArrayVector[10];
         for (int i = 0; i < 10; i++) {

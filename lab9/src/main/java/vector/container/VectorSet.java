@@ -25,7 +25,7 @@ public class VectorSet<E extends Vector> extends VectorCollection<E> implements 
     }
 
     @Override
-    public boolean addAll(Collection c) {
+    public boolean addAll(Collection<? extends E> c) {
         Object[] checkArr = c.toArray();
         Object[] addArr = new Object[checkArr.length];
         int addIndex = 0;
