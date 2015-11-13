@@ -193,9 +193,24 @@ public class VectorMap<K, V extends Vector> implements Map<K, V> {
     }
 
 
+//    @Override
+//    public Collection<V> values() {
+//        return new ArrayList<V>(getEntryData(entry -> entry.value));
+//    }
+
     @Override
     public Collection<V> values() {
-        return new ArrayList<V>(getEntryData(entry -> entry.value));
+        ArrayList<V> result = new ArrayList<>();
+        for (VectorEntry elem : data) {
+            if (elem != null) {
+                VectorEntry current = elem;
+                while (current != null) {
+                    result.add((V) current.value);
+                    current = current.next;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
