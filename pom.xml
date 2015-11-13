@@ -15,6 +15,7 @@
         <module>lab5</module>
         <module>lab7</module>
         <module>lab8</module>
+        <module>lab9</module>
     </modules>
 
     <properties>
@@ -53,8 +54,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

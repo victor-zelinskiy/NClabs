@@ -6,40 +6,41 @@ import java.util.*;
 import java.util.function.Function;
 
 
-public class VectorMap implements Map {
+public class VectorMap<K, V extends Vector> implements Map<K, V> {
 
-    public static class VectorEntry implements Map.Entry {
-        private Object key;
-        private Vector value;
-        private VectorEntry next;
+    public static class VectorEntry<K, V> implements Entry<K, V> {
+        private K key;
+        private V value;
+        private VectorEntry<K, V> next;
 
-        VectorEntry(Object key, Vector value, VectorEntry next) {
+        VectorEntry(K key, V value, VectorEntry<K, V> next) {
             this.key = key;
             this.value = value;
             this.next = next;
         }
 
+
+
         @Override
-        public Object getKey() {
+        public K getKey() {
             return key;
         }
 
         @Override
-        public Object getValue() {
+        public V getValue() {
             return value;
         }
 
         @Override
-        public Object setValue(Object value) {
-            if (!(value instanceof Vector)) throw new IllegalArgumentException();
-            Object oldValue = this.value;
-            this.value = (Vector) value;
+        public V setValue(V value) {
+            V oldValue = this.value;
+            this.value = value;
             return oldValue;
         }
 
-        private VectorEntry findByKey(Object key) {
-            VectorEntry result = null;
-            for (VectorEntry current = this; current != null; current = current.next) {
+        private VectorEntry<K, V> findByKey(Object key) {
+            VectorEntry<K,V> result = null;
+            for (VectorEntry<K, V> current = this; current != null; current = current.next) {
                 if ((key == null) ? current.key == null : key.equals(current.key)) {
                     result = current;
                 }
@@ -47,9 +48,9 @@ public class VectorMap implements Map {
             return result;
         }
 
-        private VectorEntry findByValue(Object value) {
-            VectorEntry result = null;
-            for (VectorEntry current = this; current != null; current = current.next) {
+        private VectorEntry<K, V> findByValue(Object value) {
+            VectorEntry<K, V> result = null;
+            for (VectorEntry<K, V> current = this; current != null; current = current.next) {
                 if ((value == null) ? current.value == null : value.equals(current.value)) {
                     result = current;
                 }
@@ -57,15 +58,15 @@ public class VectorMap implements Map {
             return result;
         }
 
-        private VectorEntry findLast() {
-            VectorEntry current = this;
+        private VectorEntry<K,V> findLast() {
+            VectorEntry<K,V> current = this;
             while (current.next != null) current = current.next;
             return current;
         }
 
-        private Vector deleteByKey(Object key) {
-            VectorEntry prev = this;
-            for (VectorEntry current = this.next; current != null; current = current.next) {
+        private V deleteByKey(Object key) {
+            VectorEntry<K, V> prev = this;
+            for (VectorEntry<K, V> current = this.next; current != null; current = current.next) {
                 if ((key == null) ? current.key == null : key.equals(current.key)) {
                     prev.next = null;
                     return current.value;
@@ -76,14 +77,20 @@ public class VectorMap implements Map {
         }
     }
 
-    private VectorEntry[] data;
+    private VectorEntry<K, V>[] data;
     private int size;
     private int capacity;
 
     public VectorMap() {
-        capacity = 10;
-        data = new VectorEntry[capacity];
+        this(10);
     }
+
+    @SuppressWarnings("unchecked")
+    public VectorMap(int capacity) {
+        this.capacity = capacity;
+        data =  (VectorEntry<K,V>[])new VectorEntry[capacity];
+    }
+
 
 
     @Override
@@ -120,7 +127,7 @@ public class VectorMap implements Map {
     }
 
     @Override
-    public Object get(Object key) {
+    public V get(Object key) {
         int hash = hashForKey(key);
         if (data[hash] != null) {
             return data[hash].findByKey(key).value;
@@ -129,19 +136,17 @@ public class VectorMap implements Map {
     }
 
     @Override
-    public Object put(Object key, Object value) {
-        valueCheck(value);
-        Vector newValue = (Vector) value;
-        Vector oldValue = null;
+    public V put(K key, V value) {
+        V oldValue = null;
         int keyHash = hashForKey(key);
-        VectorEntry newEntry = new VectorEntry(key, newValue, null);
+        VectorEntry<K, V> newEntry = new VectorEntry<>(key, value, null);
         if (data[keyHash] == null) {
             data[keyHash] = newEntry;
         } else {
             oldValue = data[keyHash].value;
-            VectorEntry elem = data[keyHash].findByKey(key);
+            VectorEntry<K, V> elem = data[keyHash].findByKey(key);
             if (elem != null) {
-                elem.value = newValue;
+                elem.value = value;
             } else {
                 data[keyHash].findLast().next = newEntry;
             }
@@ -155,9 +160,9 @@ public class VectorMap implements Map {
     }
 
     @Override
-    public Object remove(Object key) {
+    public V remove(Object key) {
         int keyHash = hashForKey(key);
-        Vector oldValue = null;
+        V oldValue = null;
         if (data[keyHash] != null) {
             if (data[keyHash].next == null) {
                 oldValue = data[keyHash].value;
@@ -171,14 +176,13 @@ public class VectorMap implements Map {
     }
 
     @Override
-    public void putAll(Map m) {
+    public void putAll(Map<? extends K, ? extends V> m) {
         for (Object elem : m.values()) {
             if (!(elem instanceof Vector)) throw new IllegalArgumentException();
         }
 
-        for (Object elem : m.entrySet()) {
-            Map.Entry entry = (Entry) elem;
-            put(entry.getKey(), entry.getValue());
+        for (Map.Entry<? extends K, ? extends V> elem : m.entrySet()) {
+            put(elem.getKey(), elem.getValue());
         }
     }
 
@@ -190,19 +194,19 @@ public class VectorMap implements Map {
 
 
     @Override
-    public Collection values() {
-        return new ArrayList(getEntryData(entry -> entry.value));
+    public Collection<V> values() {
+        return new ArrayList<V>(getEntryData(entry -> entry.value));
     }
 
     @Override
-    public Set keySet() {
-        return new HashSet(getEntryData(entry -> entry.key));
+    public Set<K> keySet() {
+        return new HashSet<K>(getEntryData(entry -> entry.key));
     }
 
 
     @Override
-    public Set<Entry> entrySet() {
-        return new HashSet(getEntryData(entry -> entry));
+    public Set<Entry<K, V>> entrySet() {
+        return new HashSet<Entry<K, V>>(getEntryData(entry -> entry));
     }
 
 
